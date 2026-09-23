@@ -1,0 +1,87 @@
+{
+  "name": "@everybenefits/sso",
+  "version": "0.1.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "require": "./dist/client.js",
+      "import": "./dist/client.js",
+      "default": "./dist/client.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "require": "./dist/server.js",
+      "import": "./dist/server.js",
+      "default": "./dist/server.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "require": "./dist/react/index.js",
+      "import": "./dist/react/index.js",
+      "default": "./dist/react/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@everybenefits/shared": "github:everybenefits/pulse-shared#v0.1.0"
+  },
+  "peerDependencies": {
+    "firebase": "^12.0.0",
+    "firebase-admin": "^14.0.0",
+    "next": ">=15.0.0",
+    "next-intl": "^4.0.0",
+    "react": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "firebase": {
+      "optional": true
+    },
+    "firebase-admin": {
+      "optional": true
+    },
+    "next": {
+      "optional": true
+    },
+    "next-intl": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "firebase": "^12.17.1",
+    "firebase-admin": "^14.4.0",
+    "next": "^16.2.12",
+    "next-intl": "~4.13.4",
+    "react": "19.2.8",
+    "typescript": "^5.9.3",
+    "vitest": "~4.1.10"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/everybenefits/pulse-sso.git"
+  }
+}
