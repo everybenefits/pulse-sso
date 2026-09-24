@@ -91,12 +91,19 @@ function allAppOrigins() {
         ...shared_1.PRODUCTION_APP_ORIGINS,
     ]);
 }
-/** Canonical Pulse-family origin check, including App Hosting previews. */
+/** Canonical Pulse-family origin check, including App Hosting previews when allowed. */
 function isAllowedAppOrigin(origin) {
     try {
         const normalized = new URL(origin).origin;
-        return (allAppOrigins().has(normalized) ||
-            (0, shared_1.isAppHostingPreviewOrigin)(normalized));
+        if (allAppOrigins().has(normalized))
+            return true;
+        if (!(0, shared_1.isAppHostingPreviewOrigin)(normalized))
+            return false;
+        // Production: previews only when explicitly opted in (SSO handoff risk).
+        if (process.env.NODE_ENV === "production") {
+            return process.env.PULSE_SSO_ALLOW_PREVIEWS === "true";
+        }
+        return true;
     }
     catch {
         return false;

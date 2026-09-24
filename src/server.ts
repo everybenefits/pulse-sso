@@ -41,6 +41,7 @@ export type SsoRequestContext = {
   appCheckToken?: string | null;
   clientIp?: string;
   origin?: string | null;
+  referer?: string | null;
   /** Cloud Functions use their own App Check enforcement. */
   skipAppCheck?: boolean;
 };
@@ -54,26 +55,58 @@ function clientIpFromRequest(request: Request): string {
   return request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
+function originFromReferer(referer: string | null | undefined): string | null {
+  if (!referer?.trim()) return null;
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return null;
+  }
+}
+
 export function contextFromRequest(request: Request): SsoRequestContext {
   return {
     appCheckToken: request.headers.get("x-firebase-appcheck"),
     clientIp: clientIpFromRequest(request),
     origin: request.headers.get("origin"),
+    referer: request.headers.get("referer"),
   };
 }
 
-/** Same-origin fetch always sends Origin; missing Origin is allowed (non-browser). */
-export function assertAllowedSsoOrigin(origin: string | null | undefined): void {
-  if (!origin) return;
-  if (!isAllowedAppOrigin(origin)) {
+/**
+ * Browser fetch usually sends Origin; Referer is accepted as a fallback.
+ * Outside emulators, missing both is rejected (blocks non-browser callers
+ * from skipping the allowlist).
+ */
+export function assertAllowedSsoOrigin(
+  origin: string | null | undefined,
+  opts?: { usingEmulators?: boolean; referer?: string | null },
+): void {
+  const usingEmulators = opts?.usingEmulators ?? false;
+  const candidate =
+    origin?.trim() || originFromReferer(opts?.referer) || null;
+  if (!candidate) {
+    if (usingEmulators) return;
+    throw new SsoHttpError(403, "origin-not-allowed", "Origin required.");
+  }
+  if (!isAllowedAppOrigin(candidate)) {
     throw new SsoHttpError(403, "origin-not-allowed", "Origin not allowed.");
   }
 }
 
-/** App Check for SSO is opt-in only (`PULSE_SSO_REQUIRE_APP_CHECK=true`). */
-export function requireAppCheckEnabled(usingEmulators: boolean): boolean {
-  if (usingEmulators) return false;
+/**
+ * App Check for SSO is opt-in (`PULSE_SSO_REQUIRE_APP_CHECK=true`).
+ * Only the Auth emulator disables it — Firestore-only emulator must not.
+ */
+export function requireAppCheckEnabled(_usingEmulators: boolean): boolean {
+  if (process.env.FIREBASE_AUTH_EMULATOR_HOST?.trim()) return false;
   return process.env.PULSE_SSO_REQUIRE_APP_CHECK === "true";
+}
+
+/** Revocation checks stay on in production even if Firestore emulator env leaks. */
+export function shouldCheckIdTokenRevoked(_usingEmulators: boolean): boolean {
+  if (process.env.NODE_ENV === "production") return true;
+  return !process.env.FIREBASE_AUTH_EMULATOR_HOST?.trim();
 }
 
 export function rateLimitDocId(bucket: string, identity: string): string {
@@ -127,11 +160,6 @@ export function createSsoServer(deps: SsoServerDeps) {
     });
   }
 
-  function ensureAuthEmulatorHost(): void {
-    if (deps.usingEmulators() && !process.env.FIREBASE_AUTH_EMULATOR_HOST) {
-      process.env.FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099";
-    }
-  }
 
   async function assertActiveAccount(uid: string): Promise<void> {
     const snap = await deps.db().doc(`users/${uid}`).get();
@@ -151,19 +179,21 @@ export function createSsoServer(deps: SsoServerDeps) {
     idToken: string,
   ): Promise<{ code: string; uid: string }> {
     await verifyAppCheck(ctx);
-    assertAllowedSsoOrigin(ctx.origin);
+    assertAllowedSsoOrigin(ctx.origin, {
+      usingEmulators: deps.usingEmulators(),
+      referer: ctx.referer,
+    });
     await consumeRateLimit("create_ip", ctx.clientIp || "unknown");
 
     if (idToken.length < ID_TOKEN_MIN_LEN) {
       throw new SsoHttpError(400, "idToken-required", "idToken required");
     }
 
-    ensureAuthEmulatorHost();
     let uid: string;
     try {
       const decoded = await deps.auth().verifyIdToken(
         idToken,
-        !deps.usingEmulators(),
+        shouldCheckIdTokenRevoked(deps.usingEmulators()),
       );
       uid = decoded.uid;
     } catch {
@@ -223,7 +253,10 @@ export function createSsoServer(deps: SsoServerDeps) {
     code: string,
   ): Promise<{ customToken: string; uid: string }> {
     await verifyAppCheck(ctx);
-    assertAllowedSsoOrigin(ctx.origin);
+    assertAllowedSsoOrigin(ctx.origin, {
+      usingEmulators: deps.usingEmulators(),
+      referer: ctx.referer,
+    });
     await consumeRateLimit("exchange_ip", ctx.clientIp || "unknown");
 
     const trimmed = code.trim();
@@ -233,8 +266,6 @@ export function createSsoServer(deps: SsoServerDeps) {
     ) {
       throw new SsoHttpError(400, "code-required", "handoff code required");
     }
-
-    ensureAuthEmulatorHost();
 
     // Rate-limit by code hash before consume so failed quota never burns the code.
     await consumeRateLimit("exchange_code", trimmed);

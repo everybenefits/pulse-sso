@@ -155,9 +155,24 @@ describe("error mapping", () => {
 });
 
 describe("assertAllowedSsoOrigin", () => {
-  it("allows missing origin (non-browser)", () => {
-    expect(() => assertAllowedSsoOrigin(null)).not.toThrow();
-    expect(() => assertAllowedSsoOrigin(undefined)).not.toThrow();
+  it("allows missing origin only when using emulators", () => {
+    expect(() =>
+      assertAllowedSsoOrigin(null, { usingEmulators: true }),
+    ).not.toThrow();
+    expect(() =>
+      assertAllowedSsoOrigin(undefined, { usingEmulators: true }),
+    ).not.toThrow();
+  });
+
+  it("rejects missing origin outside emulators", () => {
+    try {
+      assertAllowedSsoOrigin(null);
+      throw new Error("expected throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(SsoHttpError);
+      expect((error as SsoHttpError).code).toBe("origin-not-allowed");
+      expect((error as SsoHttpError).status).toBe(403);
+    }
   });
 
   it("allows Pulse-family origins", () => {

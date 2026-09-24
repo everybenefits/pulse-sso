@@ -97,14 +97,17 @@ export function allAppOrigins(): Set<string> {
   ]);
 }
 
-/** Canonical Pulse-family origin check, including App Hosting previews. */
+/** Canonical Pulse-family origin check, including App Hosting previews when allowed. */
 export function isAllowedAppOrigin(origin: string): boolean {
   try {
     const normalized = new URL(origin).origin;
-    return (
-      allAppOrigins().has(normalized) ||
-      isAppHostingPreviewOrigin(normalized)
-    );
+    if (allAppOrigins().has(normalized)) return true;
+    if (!isAppHostingPreviewOrigin(normalized)) return false;
+    // Production: previews only when explicitly opted in (SSO handoff risk).
+    if (process.env.NODE_ENV === "production") {
+      return process.env.PULSE_SSO_ALLOW_PREVIEWS === "true";
+    }
+    return true;
   } catch {
     return false;
   }

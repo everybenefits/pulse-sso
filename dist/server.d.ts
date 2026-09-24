@@ -18,14 +18,27 @@ export type SsoRequestContext = {
     appCheckToken?: string | null;
     clientIp?: string;
     origin?: string | null;
+    referer?: string | null;
     /** Cloud Functions use their own App Check enforcement. */
     skipAppCheck?: boolean;
 };
 export declare function contextFromRequest(request: Request): SsoRequestContext;
-/** Same-origin fetch always sends Origin; missing Origin is allowed (non-browser). */
-export declare function assertAllowedSsoOrigin(origin: string | null | undefined): void;
-/** App Check for SSO is opt-in only (`PULSE_SSO_REQUIRE_APP_CHECK=true`). */
-export declare function requireAppCheckEnabled(usingEmulators: boolean): boolean;
+/**
+ * Browser fetch usually sends Origin; Referer is accepted as a fallback.
+ * Outside emulators, missing both is rejected (blocks non-browser callers
+ * from skipping the allowlist).
+ */
+export declare function assertAllowedSsoOrigin(origin: string | null | undefined, opts?: {
+    usingEmulators?: boolean;
+    referer?: string | null;
+}): void;
+/**
+ * App Check for SSO is opt-in (`PULSE_SSO_REQUIRE_APP_CHECK=true`).
+ * Only the Auth emulator disables it — Firestore-only emulator must not.
+ */
+export declare function requireAppCheckEnabled(_usingEmulators: boolean): boolean;
+/** Revocation checks stay on in production even if Firestore emulator env leaks. */
+export declare function shouldCheckIdTokenRevoked(_usingEmulators: boolean): boolean;
 export declare function rateLimitDocId(bucket: string, identity: string): string;
 export declare function createSsoServer(deps: SsoServerDeps): {
     createSsoHandoffCode: (ctx: SsoRequestContext, idToken: string) => Promise<{

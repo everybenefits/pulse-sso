@@ -22,7 +22,7 @@ export declare function pulseAccountUrl(locale: string, accountPath?: string): s
  */
 export declare function buildLogoutCascadeUrl(current: PulseAppId, locale: string, finalUrl: string): string;
 export declare function allAppOrigins(): Set<string>;
-/** Canonical Pulse-family origin check, including App Hosting previews. */
+/** Canonical Pulse-family origin check, including App Hosting previews when allowed. */
 export declare function isAllowedAppOrigin(origin: string): boolean;
 /** Absolute SSO consume URL on `app`, with optional post-login path. */
 export declare function ssoConsumeUrl(app: PulseAppId, locale: string, nextPath?: string): string;
