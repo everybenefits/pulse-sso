@@ -33,6 +33,14 @@ export function paymentsWebUrl() {
   );
 }
 
+/** EveryBenefits Directory: consumes Pulse SSO for its admin area only. */
+export function directoryWebUrl() {
+  return (
+    process.env.NEXT_PUBLIC_DIRECTORY_URL?.replace(/\/$/, "") ||
+    "http://localhost:3006"
+  );
+}
+
 export function appBaseUrl(app: PulseAppId) {
   if (app === "studio") return studioWebUrl();
   if (app === "admin") return adminWebUrl();
@@ -93,6 +101,7 @@ export function allAppOrigins(): Set<string> {
     new URL(studioWebUrl()).origin,
     new URL(adminWebUrl()).origin,
     new URL(paymentsWebUrl()).origin,
+    new URL(directoryWebUrl()).origin,
     ...PRODUCTION_APP_ORIGINS,
   ]);
 }
