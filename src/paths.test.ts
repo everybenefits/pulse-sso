@@ -51,6 +51,9 @@ describe("isAllowedSsoReturnUrl", () => {
     expect(
       isAllowedSsoReturnUrl("http://localhost:3002/en/auth/sso?next=%2F"),
     ).toBe(true);
+    expect(
+      isAllowedSsoReturnUrl("http://localhost:3006/es/auth/sso?next=%2Fadmin"),
+    ).toBe(true);
   });
 
   it("rejects foreign origins and non-exact sso paths", () => {

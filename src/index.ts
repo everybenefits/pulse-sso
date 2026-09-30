@@ -18,6 +18,7 @@ export { isSafeInternalPath, safeInternalPath } from "./paths";
 export {
   adminWebUrl,
   paymentsWebUrl,
+  directoryWebUrl,
   allAppOrigins,
   appBaseUrl,
   buildLogoutCascadeUrl,

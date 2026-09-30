@@ -3,6 +3,8 @@ export declare function pulseWebUrl(): string;
 export declare function studioWebUrl(): string;
 export declare function adminWebUrl(): string;
 export declare function paymentsWebUrl(): string;
+/** EveryBenefits Directory: consumes Pulse SSO for its admin area only. */
+export declare function directoryWebUrl(): string;
 export declare function appBaseUrl(app: PulseAppId): string;
 /** Prefer Pulse as the SSO hub for silent bridges. */
 export declare function siblingApp(app: PulseAppId): PulseAppId;
