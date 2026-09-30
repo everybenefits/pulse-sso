@@ -12,8 +12,8 @@ importers:
   .:
     dependencies:
       '@everybenefits/shared':
-        specifier: github:everybenefits/pulse-shared#v0.1.2
-        version: https://codeload.github.com/everybenefits/pulse-shared/tar.gz/ba518195f475c8475b4a2d71c64f8931b9dbe76c
+        specifier: github:everybenefits/pulse-shared#v0.1.5
+        version: https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b
     devDependencies:
       '@types/react':
         specifier: ^19.2.2
@@ -45,9 +45,9 @@ packages:
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
 
-  '@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/ba518195f475c8475b4a2d71c64f8931b9dbe76c':
-    resolution: {gitHosted: true, integrity: sha512-uXPm4sIWBmUSR5vIqo/54IDV4bGT/xN1m6VKoNd2IC/LEcq9f7Lj9puT6mnd0gfqUG4WlO3hcEwiamu2ESvVSA==, tarball: https://codeload.github.com/everybenefits/pulse-shared/tar.gz/ba518195f475c8475b4a2d71c64f8931b9dbe76c}
-    version: 0.1.2
+  '@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b':
+    resolution: {gitHosted: true, integrity: sha512-MCKbqphWq5AUQEydkrUxRAiVa9ljirf4Apz3RqvEvaDqpOLaK/ygTBSxb04TI8QgNvWLmH6a+TWAgNn1LwnQcA==, tarball: https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b}
+    version: 0.1.5
 
   '@fastify/busboy@3.2.2':
     resolution: {integrity: sha512-yXSS27qPExaXeuLvMRMXOLtpipzfQYNjG3FkunDWKGfMYjKuhFXko9CVzqxm8jcF+lmtS9Fd89QNdh9XDjnbNg==}
@@ -1887,7 +1887,7 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/ba518195f475c8475b4a2d71c64f8931b9dbe76c':
+  '@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b':
     dependencies:
       zod: 4.6.5
 
