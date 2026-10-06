@@ -11,3 +11,4 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   "@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/ba518195f475c8475b4a2d71c64f8931b9dbe76c": false
+  "@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b": false
