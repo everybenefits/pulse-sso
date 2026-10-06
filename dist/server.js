@@ -202,7 +202,8 @@ function createSsoServer(deps) {
         await consumeRateLimit("exchange_ip", ctx.clientIp || "unknown");
         const trimmed = code.trim();
         if (trimmed.length < constants_1.CODE_MIN_LEN ||
-            trimmed.length > constants_1.CODE_MAX_LEN) {
+            trimmed.length > constants_1.CODE_MAX_LEN ||
+            !/^[A-Za-z0-9_-]+$/.test(trimmed)) {
             throw new SsoHttpError(400, "code-required", "handoff code required");
         }
         // Rate-limit by code hash before consume so failed quota never burns the code.

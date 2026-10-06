@@ -262,7 +262,8 @@ export function createSsoServer(deps: SsoServerDeps) {
     const trimmed = code.trim();
     if (
       trimmed.length < CODE_MIN_LEN ||
-      trimmed.length > CODE_MAX_LEN
+      trimmed.length > CODE_MAX_LEN ||
+      !/^[A-Za-z0-9_-]+$/.test(trimmed)
     ) {
       throw new SsoHttpError(400, "code-required", "handoff code required");
     }
