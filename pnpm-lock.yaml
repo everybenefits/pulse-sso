@@ -1975,8 +1975,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod@4.6.5:
-    resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
 snapshots:
 
@@ -1998,7 +1998,7 @@ snapshots:
 
   '@everybenefits/shared@https://codeload.github.com/everybenefits/pulse-shared/tar.gz/47e942d4e7d20b61937de3d5946315e0376fa15b':
     dependencies:
-      zod: 4.6.5
+      zod: 4.6.7
 
   '@fastify/busboy@3.2.2': {}
 
@@ -3918,4 +3918,4 @@ snapshots:
   yocto-queue@0.1.0:
     optional: true
 
-  zod@4.6.5: {}
+  zod@4.6.7: {}
